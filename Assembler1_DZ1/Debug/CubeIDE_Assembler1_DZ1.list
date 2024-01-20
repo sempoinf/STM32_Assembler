@@ -1,0 +1,234 @@
+
+CubeIDE_Assembler1_DZ1.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .isr_vector   00000130  08000000  08000000  00010000  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .text         000000f8  08000130  08000130  00010130  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .rodata       00000000  08000228  08000230  00010230  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  3 .ARM.extab    00000000  08000228  08000228  00010230  2**0
+                  CONTENTS
+  4 .ARM          00000000  08000228  08000228  00010230  2**0
+                  CONTENTS
+  5 .preinit_array 00000000  08000228  08000230  00010230  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  6 .init_array   00000004  08000228  08000228  00010228  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  7 .fini_array   00000004  0800022c  0800022c  0001022c  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  8 .data         00000000  20000000  20000000  00010230  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  9 .bss          0000001c  20000000  08000230  00020000  2**2
+                  ALLOC
+ 10 ._user_heap_stack 00000604  2000001c  08000230  0002001c  2**0
+                  ALLOC
+ 11 .ARM.attributes 00000029  00000000  00000000  00010230  2**0
+                  CONTENTS, READONLY
+ 12 .comment      00000043  00000000  00000000  00010259  2**0
+                  CONTENTS, READONLY
+ 13 .debug_line   0000008b  00000000  00000000  0001029c  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 14 .debug_line_str 00000070  00000000  00000000  00010327  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 15 .debug_info   00000023  00000000  00000000  00010397  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 16 .debug_abbrev 00000012  00000000  00000000  000103ba  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 17 .debug_aranges 00000028  00000000  00000000  000103d0  2**3
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 18 .debug_str    0000007c  00000000  00000000  000103f8  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 19 .debug_rnglists 0000001a  00000000  00000000  00010474  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+
+Disassembly of section .text:
+
+08000130 <__do_global_dtors_aux>:
+ 8000130:	b510      	push	{r4, lr}
+ 8000132:	4c05      	ldr	r4, [pc, #20]	; (8000148 <__do_global_dtors_aux+0x18>)
+ 8000134:	7823      	ldrb	r3, [r4, #0]
+ 8000136:	b933      	cbnz	r3, 8000146 <__do_global_dtors_aux+0x16>
+ 8000138:	4b04      	ldr	r3, [pc, #16]	; (800014c <__do_global_dtors_aux+0x1c>)
+ 800013a:	b113      	cbz	r3, 8000142 <__do_global_dtors_aux+0x12>
+ 800013c:	4804      	ldr	r0, [pc, #16]	; (8000150 <__do_global_dtors_aux+0x20>)
+ 800013e:	f3af 8000 	nop.w
+ 8000142:	2301      	movs	r3, #1
+ 8000144:	7023      	strb	r3, [r4, #0]
+ 8000146:	bd10      	pop	{r4, pc}
+ 8000148:	20000000 	.word	0x20000000
+ 800014c:	00000000 	.word	0x00000000
+ 8000150:	08000210 	.word	0x08000210
+
+08000154 <frame_dummy>:
+ 8000154:	b508      	push	{r3, lr}
+ 8000156:	4b03      	ldr	r3, [pc, #12]	; (8000164 <frame_dummy+0x10>)
+ 8000158:	b11b      	cbz	r3, 8000162 <frame_dummy+0xe>
+ 800015a:	4903      	ldr	r1, [pc, #12]	; (8000168 <frame_dummy+0x14>)
+ 800015c:	4803      	ldr	r0, [pc, #12]	; (800016c <frame_dummy+0x18>)
+ 800015e:	f3af 8000 	nop.w
+ 8000162:	bd08      	pop	{r3, pc}
+ 8000164:	00000000 	.word	0x00000000
+ 8000168:	20000004 	.word	0x20000004
+ 800016c:	08000210 	.word	0x08000210
+
+08000170 <Reset_Handler>:
+  .section .text.Reset_Handler
+  .weak Reset_Handler
+  .type Reset_Handler, %function
+Reset_Handler:
+
+ 	ldr		r0, =_estack
+ 8000170:	4821      	ldr	r0, [pc, #132]	; (80001f8 <delay_loop+0x8>)
+ 	mov		sp, r0          			/* set stack pointer */
+ 8000172:	4685      	mov	sp, r0
+
+	ldr 	r0, =RCC_APB2ENR			@ адрес шины, где находится тактирование
+ 8000174:	4821      	ldr	r0, [pc, #132]	; (80001fc <delay_loop+0xc>)
+	ldr		r1, =0x10					@ включаем тактирование порта C (4 бит RCC_APB2ENR пишем '1`) (считается с "0" бита)
+ 8000176:	f04f 0110 	mov.w	r1, #16
+	str 	r1, [r0]					@ загрузка результат в регистр
+ 800017a:	6001      	str	r1, [r0, #0]
+
+	ldr		r0, =GPIOC_CRL				@ адрес порта
+ 800017c:	4820      	ldr	r0, [pc, #128]	; (8000200 <delay_loop+0x10>)
+	ldr 	r1, =0x111					@ битная маска настроек для Output mode 10MHz, Push-Pull ("0001")
+ 800017e:	f240 1111 	movw	r1, #273	; 0x111
+	ldr		r2, [r0]					@ считать порт
+ 8000182:	6802      	ldr	r2, [r0, #0]
+    bfi		r2, r1, #0, #11    			@ скопировать биты маски в позицию
+ 8000184:	f361 020a 	bfi	r2, r1, #0, #11
+    str		r2, [r0]					@ загрузить результат в регистр настройки порта
+ 8000188:	6002      	str	r2, [r0, #0]
+
+0800018a <main>:
+
+
+main:
+	@код до передачи через spi
+    bl     count_bits	@ заход в подпрограмму spi
+ 800018a:	f000 f802 	bl	8000192 <count_bits>
+    @код после передачи через spi
+    mov r5, #11
+ 800018e:	f04f 050b 	mov.w	r5, #11
+
+08000192 <count_bits>:
+
+count_bits:
+	push 	{r3, r4, r5, r7, r9, lr}	@Сохраняем registers & lr для вызова еще одной подпрограммы
+ 8000192:	e92d 42b8 	stmdb	sp!, {r3, r4, r5, r7, r9, lr}
+	mov r5, #11		@ Начинаем с 11 бита
+ 8000196:	f04f 050b 	mov.w	r5, #11
+
+0800019a <spi>:
+
+spi:
+	ldr r9, =GPIOC_BSRR @ адрес порта выходных сигналов
+ 800019a:	f8df 9068 	ldr.w	r9, [pc, #104]	; 8000204 <delay_loop+0x14>
+	ldr r1, =GPIO_BSRR_BR0 @ сбрасываем в '0' ChipSelect
+ 800019e:	f44f 3180 	mov.w	r1, #65536	; 0x10000
+	str r1, [r9]	@ загрузить результат в регистр настройки порта
+ 80001a2:	f8c9 1000 	str.w	r1, [r9]
+
+	ldr r7, [r0] 	@ Считываем данные из регистра R0
+ 80001a6:	6807      	ldr	r7, [r0, #0]
+	lsr r7, r7, r5 	@ Сдвигаем данные вправо на R5 бит (текущий бит)
+ 80001a8:	fa27 f705 	lsr.w	r7, r7, r5
+	and r7, r7, #1	@ Оставляем только младший бит
+ 80001ac:	f007 0701 	and.w	r7, r7, #1
+
+	ldr r4, =GPIOC_ODR	@Считываем текущее значение ODR (выводных данных) GPIOC
+ 80001b0:	4c15      	ldr	r4, [pc, #84]	; (8000208 <delay_loop+0x18>)
+	ldr r3, [r4]	@ загрузить значение r4 в регистр r3
+ 80001b2:	6823      	ldr	r3, [r4, #0]
+	and r3, r3, ~(1 << 2) 	@ Сбрасываем 2 бит (SDO)
+ 80001b4:	f023 0304 	bic.w	r3, r3, #4
+	orr r3, r3, r7, LSL #2 	@ Устанавливаем 2 бит в соотв с r7
+ 80001b8:	ea43 0387 	orr.w	r3, r3, r7, lsl #2
+	str r3, [r4] 		@ Записываем обновленное значение обратно в ODR
+ 80001bc:	6023      	str	r3, [r4, #0]
+
+	bl delay	@вызов подпрограммы задержки
+ 80001be:	f000 f815 	bl	80001ec <delay>
+	ldr	r1, =GPIO_BSRR_BS1	@сбрасываем в '1' Clk
+ 80001c2:	f04f 0102 	mov.w	r1, #2
+	str	r1, [r9]	@ загрузить результат в регистр настройки порта
+ 80001c6:	f8c9 1000 	str.w	r1, [r9]
+
+	bl delay	@вызов подпрограммы задержки
+ 80001ca:	f000 f80f 	bl	80001ec <delay>
+	ldr	r1, =GPIO_BSRR_BR1	@ сбрасываем в '0' Clk
+ 80001ce:	f44f 3100 	mov.w	r1, #131072	; 0x20000
+	str	r1, [r9] 	@ загрузить результат в регистр настройки порта
+ 80001d2:	f8c9 1000 	str.w	r1, [r9]
+
+	subs r5, r5, #1	@ SUB с установкой флагов результата
+ 80001d6:	3d01      	subs	r5, #1
+	bne spi		@ если != продолжаем передачу
+ 80001d8:	d1df      	bne.n	800019a <spi>
+
+	bl delay	@вызов подпрограммы задержки
+ 80001da:	f000 f807 	bl	80001ec <delay>
+	ldr	r1, =GPIO_BSRR_BS0		@ сбрасываем в '1' ChipSelect
+ 80001de:	f04f 0101 	mov.w	r1, #1
+	str	r1, [r9]	@ загрузить результат в регистр настройки порта
+ 80001e2:	f8c9 1000 	str.w	r1, [r9]
+
+	pop 	{r3, r4, r5, r7, r9, lr}	@Выгружаем из стека registers & lr
+ 80001e6:	e8bd 42b8 	ldmia.w	sp!, {r3, r4, r5, r7, r9, lr}
+	bx lr			@ выход из spi
+ 80001ea:	4770      	bx	lr
+
+080001ec <delay>:
+
+
+delay:		@ Подпрограмма задержки
+	ldr	r8, =0xFF	@ псевдоинструкция Thumb (загрузить константу в регистр)
+ 80001ec:	f04f 08ff 	mov.w	r8, #255	; 0xff
+
+080001f0 <delay_loop>:
+	delay_loop:
+	subs	r8, #1			@ SUB с установкой флагов результата
+ 80001f0:	f1b8 0801 	subs.w	r8, r8, #1
+	bne	delay_loop	@ переход, если Z==0 (результат вычитания не равен нулю)
+ 80001f4:	d1fc      	bne.n	80001f0 <delay_loop>
+	bx	lr	@ переходим в spi
+ 80001f6:	4770      	bx	lr
+ 	ldr		r0, =_estack
+ 80001f8:	20005000 	.word	0x20005000
+	ldr 	r0, =RCC_APB2ENR			@ адрес шины, где находится тактирование
+ 80001fc:	40021018 	.word	0x40021018
+	ldr		r0, =GPIOC_CRL				@ адрес порта
+ 8000200:	40011000 	.word	0x40011000
+	ldr r9, =GPIOC_BSRR @ адрес порта выходных сигналов
+ 8000204:	40011010 	.word	0x40011010
+	ldr r4, =GPIOC_ODR	@Считываем текущее значение ODR (выводных данных) GPIOC
+ 8000208:	4001100c 	.word	0x4001100c
+
+0800020c <ADC1_2_IRQHandler>:
+ * @retval : None
+*/
+  .section .text.Default_Handler,"ax",%progbits
+Default_Handler:
+Infinite_Loop:
+  b Infinite_Loop
+ 800020c:	e7fe      	b.n	800020c <ADC1_2_IRQHandler>
+	...
+
+08000210 <_init>:
+ 8000210:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 8000212:	bf00      	nop
+ 8000214:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 8000216:	bc08      	pop	{r3}
+ 8000218:	469e      	mov	lr, r3
+ 800021a:	4770      	bx	lr
+
+0800021c <_fini>:
+ 800021c:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 800021e:	bf00      	nop
+ 8000220:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 8000222:	bc08      	pop	{r3}
+ 8000224:	469e      	mov	lr, r3
+ 8000226:	4770      	bx	lr
